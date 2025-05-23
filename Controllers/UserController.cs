@@ -113,4 +113,20 @@ public class UserController : Controller
             userlist.Remove(user);
             return RedirectToAction(nameof(Index));
         }
+
+        // GET: User/Search?term=searchTerm
+        public ActionResult Search(string term)
+        {
+            if (string.IsNullOrWhiteSpace(term))
+            {
+                ViewBag.Term = "";
+                return View("Index", userlist);
+            }
+            ViewBag.Term = term;
+            var results = userlist.Where(u =>
+                (!string.IsNullOrEmpty(u.Name) && u.Name.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
+                (!string.IsNullOrEmpty(u.Email) && u.Email.Contains(term, StringComparison.OrdinalIgnoreCase))
+            ).ToList();
+            return View("Index", results);
+        }
 }
